@@ -18,7 +18,7 @@ interface Numbers {
   final int SIZE = 400; //size of display
   final int NUMQ= 15; //nuber of questions in each section
   final int NUMI= 11; //number of integral questions
-  final int NUMDE= 4; //number of derivetive questions
+  final int NUMDE= 4; //number of derivitve questions
   final int ALG_TOPIC= 5; //number of questions for each algerbra topic
 }
 
