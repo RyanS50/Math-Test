@@ -1,0 +1,36 @@
+Int
+1 c
+2 a
+3 c
+4 d
+5 a
+6 b
+7 d
+8 a
+9 c
+10 b
+11 c
+Deriv
+12 d
+13 c
+14 a
+15 a
+
+Factor
+16 b
+17 a
+18 b
+19 d
+20 b
+Imaginary
+21 a
+22 c
+23 d
+24 b
+25 a
+Domain
+26 b
+27 c
+28 d
+29 a
+30 c
