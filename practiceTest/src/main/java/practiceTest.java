@@ -39,7 +39,6 @@ public class practiceTest extends Application implements Numbers  {
      nextButton.setVisible(false);  //hide the next button
      Button calcButton= makeButton("Calculus");
      Button algButton= makeButton("Algerbra");
-     Button takeAgain= makeButton("Take again");
 
      Label intro = new Label("Would you like Calculus or Algerbra");
      Label l = new Label("");  //will display right/wrong
@@ -103,7 +102,7 @@ public class practiceTest extends Application implements Numbers  {
           results.setFont(new Font(50));
           Label percent = new Label("That's "+stats.toPercent()+"%");
           percent.setFont(new Font(50));
-          newV.getChildren().addAll(results,percent, takeAgain);
+          newV.getChildren().addAll(results,percent);
           Scene review = new Scene(newV, SIZE, SIZE);
           stage.setScene(review);
           stage.show();
