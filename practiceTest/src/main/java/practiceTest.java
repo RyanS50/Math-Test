@@ -18,7 +18,7 @@ interface Numbers {
   final int SIZE = 400; //size of display
   final int NUMQ= 15; //nuber of questions in each section
   final int NUMI= 11; //number of integral questions
-  final int NUMDE= 4; //number of derivitve questions
+  final int NUMDE= 4; //number of derivetive questions
   final int ALG_TOPIC= 5; //number of questions for each algerbra topic
 }
 
@@ -39,6 +39,7 @@ public class practiceTest extends Application implements Numbers  {
      nextButton.setVisible(false);  //hide the next button
      Button calcButton= makeButton("Calculus");
      Button algButton= makeButton("Algerbra");
+     Button takeAgain= makeButton("Take again");
 
      Label intro = new Label("Would you like Calculus or Algerbra");
      Label l = new Label("");  //will display right/wrong
@@ -71,84 +72,16 @@ public class practiceTest extends Application implements Numbers  {
 
      //makes something happen when you click a button
      aButton.setOnAction(aEvent -> {
-       if (nextButton.isVisible()) {} //if you can move on, buttons don't do anything
-       else {
-         Boolean answer= false; //create a boolean for if you were right/wrong
-           answer = r.check('a', q.questionNum); //check answer
-           if (answer) { //if you were right
-             l.setText("Correct");
-             nextButton.setVisible(true); //show the next button
-             progress(q); //marks that you got a question in a topic right
-           } else {
-             if(r.attempt>2) { //you get two chances before being shown the right answer
-               l.setText("Nope. The right answer was " + r.correctA(q.questionNum));
-               nextButton.setVisible(true);
-               r.wrong++;
-             } else {
-               l.setText("Not Quite");
-             }
-           }
-       }
+       optionClicked('a', q, r, l, nextButton);
       });
      bButton.setOnAction(bEvent -> {
-       if (nextButton.isVisible()) {}
-       else {
-         Boolean answer= false;
-           answer = r.check('b', q.questionNum);
-           if (answer) {
-             l.setText("Correct");
-             nextButton.setVisible(true);
-             progress(q);
-           } else {
-               if(r.attempt>2) {
-                 l.setText("Nope. The right answer was " + r.correctA(q.questionNum));
-                 nextButton.setVisible(true);
-                 r.wrong++;
-             } else {
-                 l.setText("Not Quite");
-             }
-           }
-       }
+       optionClicked('b', q, r, l, nextButton);
       });
      cButton.setOnAction(cEvent -> {
-       if (nextButton.isVisible()) {}
-       else {
-         Boolean answer= false;
-           answer = r.check('c', q.questionNum);
-           if (answer) {
-             l.setText("Correct");
-             nextButton.setVisible(true);
-             progress(q);
-           } else {
-               if(r.attempt>2) {
-                 l.setText("Nope. The right answer was " + r.correctA(q.questionNum));
-                 nextButton.setVisible(true);
-                 r.wrong++;
-             } else {
-                 l.setText("Not Quite");
-             }
-           }
-       }
+       optionClicked('c', q, r, l, nextButton);
       });
      dButton.setOnAction(dEvent -> {
-       if (nextButton.isVisible()) {}
-       else {
-         Boolean answer= false;
-           answer = r.check('d', q.questionNum);
-           if (answer) {
-             l.setText("Correct");
-             nextButton.setVisible(true);
-             progress(q);
-           } else {
-               if(r.attempt>2) {
-                 l.setText("Nope. The right answer was " + r.correctA(q.questionNum));
-                 nextButton.setVisible(true);
-                 r.wrong++;
-             } else {
-                 l.setText("Not Quite");
-             }
-           }
-       }
+       optionClicked('d', q, r, l, nextButton);
       });
      nextButton.setOnAction(next -> {
         l.setText(""); //reset right/wrong label
@@ -165,9 +98,12 @@ public class practiceTest extends Application implements Numbers  {
           nextButton.setVisible(false);
           //if no more questions, shows the results
         } catch(FileNotFoundException e) {
-          Label results = new Label(r.getStats());
+          RationalNumber stats = r.getStats();
+          Label results = new Label(stats.toString());
           results.setFont(new Font(50));
-          newV.getChildren().add(results);
+          Label percent = new Label("That's "+stats.toPercent()+"%");
+          percent.setFont(new Font(50));
+          newV.getChildren().addAll(results,percent, takeAgain);
           Scene review = new Scene(newV, SIZE, SIZE);
           stage.setScene(review);
           stage.show();
@@ -234,6 +170,28 @@ public class practiceTest extends Application implements Numbers  {
        q.imaginary[q.questionNum%15-ALG_TOPIC-1]=true;
      } else {
        q.domain[q.questionNum%16-2*ALG_TOPIC]=true;
+     }
+   }
+
+   //answer buttons reaction
+   public void optionClicked(char x, Question q, Response r, Label l, Button nextButton) {
+     if (nextButton.isVisible()) {} //if you can move on, buttons don't do anything
+     else {
+       Boolean answer= false; //create a boolean for if you were right/wrong
+         answer = r.check(x, q.questionNum); //check answer
+         if (answer) { //if you were right
+           l.setText("Correct");
+           nextButton.setVisible(true); //show the next button
+           progress(q); //marks that you got a question in a topic right
+         } else {
+           if(r.attempt>2) { //you get two chances before being shown the right answer
+             l.setText("Nope. The right answer was " + r.correctA(q.questionNum));
+             nextButton.setVisible(true);
+             r.wrong++;
+           } else {
+             l.setText("Not Quite");
+           }
+         }
      }
    }
 }
@@ -397,9 +355,9 @@ class Response {
   }
 
   //shows your results
-  public String getStats() {
+  public RationalNumber getStats() {
     RationalNumber stats = new RationalNumber(this.right, (this.wrong+this.right));
-    return stats.toString();
+    return stats;
   }
 }
 
@@ -413,12 +371,6 @@ class RationalNumber {
     }
     this.numerator = numerator;
     this.denominator = denominator;
-  }
-
-  //creates the 0/1 rational number
-  public RationalNumber() {
-    numerator = 0;
-    denominator = 1;
   }
 
   //returns the denominator
@@ -439,53 +391,9 @@ class RationalNumber {
     return numerator + "/" + denominator;
   }
 
-  //adds this rational number by another
-  public void add(RationalNumber x) {
-    if (this.denominator == x.getDenominator()) {
-      this.numerator += x.getNumerator(); //if denominators are the same, just add numerators
-    } else {
-      //get common denomiator by multiplying the two denominators together and add
-      this.numerator *= x.getDenominator();
-      int temp = x.getNumerator() * this.denominator;
-      this.numerator += temp;
-      this.denominator *= x.getDenominator();
-    }
-    simplify();
-  }
-
-  //subtracts this rational number by another
-  public void subtract(RationalNumber x) {
-    if (this.denominator == x.getDenominator()) {
-      this.numerator -= x.getNumerator(); //if denomiators are equal, subtract numerators
-    } else {
-      //get common denomiator by multiplying the two denomiators together
-      this.numerator *= x.getDenominator();
-      int temp = x.getNumerator() * this.denominator;
-      this.numerator -= temp;
-      this.denominator *= x.getDenominator();
-    }
-    simplify();
-  }
-
-  //multiplies this rational number by another
-  public void multiply(RationalNumber x) {
-    //just multiply the numerators together and the denominators together
-    this.numerator *= x.getNumerator();
-    this.denominator *= x.getDenominator();
-    simplify();
-  }
-
-  //divides this rational number by another
-  public void divide(RationalNumber x) {
-    //division is multiplication of reciprocal
-    //so numerator time denomiator and vice versa
-    this.numerator *= x.getDenominator();
-    this.denominator *= x.getNumerator();
-    simplify();
-  }
-
-  public double toPercent(){
-    return (this.numerator/this.denominator*100);
+  //turns the number into a percent
+  public int toPercent(){
+    return ((int)((double)this.numerator/(double)this.denominator*100));
   }
 
 
